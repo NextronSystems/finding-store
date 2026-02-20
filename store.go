@@ -33,7 +33,7 @@ const (
 	suffixHash     = ".hash"
 )
 
-func (s *Store) Store(finding *thorlog.Finding, content io.ReadSeeker) error {
+func (s *Store) Store(finding *thorlog.Assessment, content io.ReadSeeker) error {
 	findingId := finding.Meta.GenID
 	if findingId == "" {
 		return fmt.Errorf("finding ID is empty, cannot store finding")
