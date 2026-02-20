@@ -3,7 +3,7 @@ module github.com/NextronSystems/finding-store
 go 1.24
 
 require (
-	github.com/NextronSystems/jsonlog v0.0.0-20250523073520-69e056dcf33d
+	github.com/NextronSystems/jsonlog v1.0.0-alpha.0.20260217085034-6cb530d8ac82
 	github.com/stretchr/testify v1.10.0
 )
 

@@ -20,7 +20,7 @@ func TestLayout(t *testing.T) {
 	rootDir := t.TempDir()
 	layout := New(rootDir)
 
-	finding := thorlog.NewFinding(thorlog.NewFile("test.txt"), "Test finding")
+	finding := thorlog.NewAssessment(thorlog.NewFile("test.txt"), "Test finding")
 	finding.Meta = thorlog.LogEventMetadata{
 		GenID: "abcdef1234567890",
 		Time:  time.Now(),
@@ -47,7 +47,7 @@ func TestLayout(t *testing.T) {
 	assert.Equal(t, findings[0].Meta.GenID, readFinding.Meta.GenID)
 }
 
-func (s *Store) LoadFinding(id string) (*thorlog.Finding, string, error) {
+func (s *Store) LoadFinding(id string) (*thorlog.Assessment, string, error) {
 	if len(id) < 2 {
 		return nil, "", fmt.Errorf("finding ID is too short, must be at least 2 characters: %s", id)
 	}
@@ -60,7 +60,7 @@ func (s *Store) LoadFinding(id string) (*thorlog.Finding, string, error) {
 	if err != nil {
 		return nil, "", fmt.Errorf("cannot unmarshal finding data: %w", err)
 	}
-	finding, ok := event.(*thorlog.Finding)
+	finding, ok := event.(*thorlog.Assessment)
 	if !ok {
 		return nil, "", fmt.Errorf("data is not a valid finding: %s", id)
 	}
@@ -74,7 +74,7 @@ func (s *Store) LoadFinding(id string) (*thorlog.Finding, string, error) {
 	return finding, string(hash), nil
 }
 
-func (s *Store) LoadContent(hash string) ([]byte, []*thorlog.Finding, error) {
+func (s *Store) LoadContent(hash string) ([]byte, []*thorlog.Assessment, error) {
 	if len(hash) < 2 {
 		return nil, nil, fmt.Errorf("content hash is too short, must be at least 2 characters: %s", hash)
 	}
@@ -91,14 +91,14 @@ func (s *Store) LoadContent(hash string) ([]byte, []*thorlog.Finding, error) {
 	defer func() {
 		_ = metadataFile.Close()
 	}()
-	var findings []*thorlog.Finding
+	var findings []*thorlog.Assessment
 	reader := bufio.NewScanner(metadataFile)
 	for reader.Scan() {
 		event, err := parser.ParseEvent(reader.Bytes())
 		if err != nil {
 			return nil, nil, fmt.Errorf("cannot parse finding metadata: %w", err)
 		}
-		finding, ok := event.(*thorlog.Finding)
+		finding, ok := event.(*thorlog.Assessment)
 		if !ok {
 			return nil, nil, fmt.Errorf("metadata is not a valid finding: %s", string(reader.Bytes()))
 		}
